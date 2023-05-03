@@ -1,7 +1,5 @@
 package com.jaya.api.impl;
 
-import com.jaya.api.dto.WishlistDTO;
-import com.jaya.api.model.Product;
 import com.jaya.api.model.User;
 import com.jaya.api.model.Wishlist;
 import com.jaya.api.repository.IWishlistRepository;
@@ -23,23 +21,8 @@ public class WishlistServiceImpl implements IWishlistService {
     }
 
     @Override
-    public Wishlist findByIdProduct(Product id) {
-        return null;
-    }
-
-    @Override
-    public Wishlist add(WishlistDTO wishlist) {
-        return null;
-    }
-
-    @Override
     public Wishlist update(Wishlist wishlist) {
         return this.wishlistRepository.save(wishlist);
-    }
-
-    @Override
-    public Wishlist delete(Wishlist wishlist) {
-        return null;
     }
 
     @Override
@@ -50,5 +33,10 @@ public class WishlistServiceImpl implements IWishlistService {
     @Override
     public Wishlist findWishListForUser(User wishlist) {
         return this.wishlistRepository.findWishListForUser(wishlist.getName());
+    }
+
+    @Override
+    public void delete(String id) {
+        this.wishlistRepository.deleteById(id);
     }
 }

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface IWishlistRepository extends MongoRepository<Wishlist, String> {
-//    Optional<Object> findByName(String name);
 
     @Query("{ 'user.name': ?0}")
     public Wishlist findWishListForUser(String name);

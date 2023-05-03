@@ -1,22 +1,18 @@
 package com.jaya.api.controller;
 
 import com.jaya.api.common.ApiResponse;
-import com.jaya.api.dto.WishlistDTO;
 import com.jaya.api.model.Product;
 import com.jaya.api.model.User;
 import com.jaya.api.model.Wishlist;
-import com.jaya.api.repository.IUserRepository;
 import com.jaya.api.service.IProductService;
 import com.jaya.api.service.IUserService;
 import com.jaya.api.service.IWishlistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.apache.logging.log4j.util.Strings.isNotBlank;
 
@@ -38,16 +34,15 @@ public class WishlistController {
         Wishlist wishlist;
 
         User user = this.userService.findById(user_id);
-        prod.add(this.productService.findById(product.getId()));
 
         if(isNotBlank(user.getName())){
+            prod.add(this.productService.findById(product.getId()));
             wishlist = this.wishlistService.findWishListForUser(user);
-            if(wishlist != null){
+            if(prod != null && wishlist != null){
                 wishlist.getProduct().add(this.productService.findById(product.getId()));
                 this.wishlistService.update(wishlist);
                 return ResponseEntity.ok(new ApiResponse<Wishlist>("Added To Wishlist", HttpStatus.CREATED));
             }
-
             wishlist = new Wishlist(user, prod);
             this.wishlistService.createWishlist(wishlist);
             return ResponseEntity.ok(new ApiResponse<Wishlist>("Created and Added To Wishlist", HttpStatus.CREATED));
@@ -57,18 +52,41 @@ public class WishlistController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<Wishlist>> allProductsInWishlist(@RequestParam String user_id){
+        Wishlist wishlist = null;
         User user = this.userService.findById(user_id);
-        return ResponseEntity.ok(new ApiResponse<Wishlist>(this.wishlistService.findWishListForUser(user)));
+        if(isNotBlank(user.getName())){
+            wishlist = this.wishlistService.findWishListForUser(user);
+        }
+        return ResponseEntity.ok(new ApiResponse<Wishlist>(wishlist));
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<ApiResponse<Wishlist>> removeItemOfWishlist(@PathVariable(name = "id") Product prod_id, @RequestParam String user_id){
-        List<Product> prod = new ArrayList<>();
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<Wishlist>> removeItemOfWishlist(@RequestParam String user_id, @RequestParam Product prod_id){
+        Product prod;
         Wishlist wishlist;
+        Wishlist finalWishlist;
 
         User user = this.userService.findById(user_id);
-        prod.remove(this.productService.findById(prod_id.getId()));
-        return ResponseEntity.ok(new ApiResponse<Wishlist>(this.wishlistService.findWishListForUser(user)));
 
+        if(isNotBlank(user.getName())) {
+            prod = this.productService.findById(prod_id.getId());
+            wishlist = this.wishlistService.findWishListForUser(user);
+
+            if (prod != null && wishlist != null) {
+                for(int i = wishlist.getProduct().size() - 1; i >= 0; i--){
+                    if(wishlist.getProduct().get(i).getId().equals(prod.getId())){
+                        wishlist.getProduct().remove(i);
+                        finalWishlist = wishlist;
+                        this.wishlistService.update(finalWishlist);
+                        return ResponseEntity.ok(new ApiResponse<Wishlist>("Removed Item Of Wishlist", HttpStatus.OK));
+                    }
+                }
+            }
+        }
+
+        return ResponseEntity.ok(new ApiResponse<Wishlist>("Not Remove Item Of Wishlist", HttpStatus.BAD_REQUEST));
     }
 }
+
+
+
