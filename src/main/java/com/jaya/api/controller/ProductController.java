@@ -5,12 +5,13 @@ import com.jaya.api.domain.model.Product;
 import com.jaya.api.service.IProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/product")
@@ -20,8 +21,8 @@ public class ProductController {
     private IProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<Product>> listAll(){
-        return ResponseEntity.ok(this.productService.listAll());
+    public ResponseEntity<Page<Product>> listAll(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable){
+        return ResponseEntity.ok(this.productService.listAll(pageable));
     }
 
     @GetMapping(path = "/{id}")
@@ -30,8 +31,10 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> add(@RequestBody @Valid ProductDTO data){
-        return ResponseEntity.ok(this.productService.add(data));
+    public ResponseEntity<Product> add(@RequestBody @Valid ProductDTO data, UriComponentsBuilder uriComponentsBuilder){
+        var product = this.productService.add(data);
+        var uri = uriComponentsBuilder.path("api/product/{id}").buildAndExpand(product.getId()).toUri();
+        return ResponseEntity.created(uri).body(product);
     }
 
     @PutMapping(path = "/{id}")

@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
@@ -24,7 +23,7 @@ import static org.apache.logging.log4j.util.Strings.isNotBlank;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@DataMongoTest //( excludeAutoConfiguration = AutoConfigureDataMongo.class )
+@DataMongoTest
 @ActiveProfiles("test")
 class IWishlistRepositoryTest {
 

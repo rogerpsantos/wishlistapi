@@ -5,6 +5,8 @@ import com.jaya.api.domain.model.Product;
 import com.jaya.api.repository.IProductRepository;
 import com.jaya.api.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +17,8 @@ public class ProductServiceImpl implements IProductService {
     @Autowired
     private IProductRepository productService;
     @Override
-    public List<Product> listAll() {
-        return this.productService.findAll();
+    public Page<Product> listAll(Pageable pageable) {
+        return this.productService.findAll(pageable);
     }
 
     @Override

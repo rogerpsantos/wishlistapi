@@ -8,9 +8,9 @@ import com.jaya.api.service.IProductService;
 import com.jaya.api.service.IUserService;
 import com.jaya.api.service.IWishlistService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 
@@ -29,9 +29,10 @@ public class WishlistController {
     private static final int TOTAL_SIZE = 20;
 
     @PostMapping
-    public ResponseEntity<Wishlist> addToWishlist(@RequestBody Product prod_id, @RequestParam String user_id) {
+    public ResponseEntity<Wishlist> addToWishlist(@RequestBody Product prod_id, @RequestParam String user_id, UriComponentsBuilder uriComponentsBuilder) {
         List<Product> prod = new ArrayList<>();
         Wishlist wishlist = null;
+
         User user = this.userService.findById(user_id);
 
         if(isNotBlank(user.getName())){
@@ -40,13 +41,18 @@ public class WishlistController {
             if(prod != null && wishlist != null){
                 if(wishlist.getProduct().size() < TOTAL_SIZE){
                     wishlist.getProduct().add(this.productService.findById(prod_id.getId()));
-                    return ResponseEntity.ok(this.wishlistService.update(wishlist));
+                    this.wishlistService.update(wishlist);
+                    var uri = uriComponentsBuilder.path("api/wishlist/{id}").buildAndExpand(wishlist.getId()).toUri();
+
+                    return ResponseEntity.created(uri).body(wishlist);
                 } else {
                     throw new GlobalRuntimeException("The wish list has 20 products to add a new product you must delete at least one product from the list.");
                 }
             }
             wishlist = new Wishlist(user, prod);
-            return ResponseEntity.ok(this.wishlistService.createWishlist(wishlist));
+            this.wishlistService.createWishlist(wishlist);
+            var uri = uriComponentsBuilder.path("api/wishlist/{id}").buildAndExpand(wishlist.getId()).toUri();
+            return ResponseEntity.created(uri).body(wishlist);
         }
         throw new GlobalRuntimeException("User not found.");
     }
