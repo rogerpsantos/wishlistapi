@@ -1,4 +1,4 @@
-package com.jaya.api.dto;
+package com.jaya.api.domain.enums;
 
 public enum Category {
     SMARTPHONES,

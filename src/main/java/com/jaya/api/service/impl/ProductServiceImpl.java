@@ -1,7 +1,7 @@
-package com.jaya.api.impl;
+package com.jaya.api.service.impl;
 
-import com.jaya.api.dto.ProductDTO;
-import com.jaya.api.model.Product;
+import com.jaya.api.domain.dto.ProductDTO;
+import com.jaya.api.domain.model.Product;
 import com.jaya.api.repository.IProductRepository;
 import com.jaya.api.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public Product findById(String id) {
-        return this.productService.findById(id).orElseThrow(()-> new IllegalArgumentException("Product does not exist"));
+        return this.productService.findById(id).get();
     }
 
     @Override

@@ -1,7 +1,8 @@
-package com.jaya.api.model;
+package com.jaya.api.domain.model;
 
-import com.jaya.api.dto.Category;
-import com.jaya.api.dto.ProductDTO;
+
+import com.jaya.api.domain.dto.ProductDTO;
+import com.jaya.api.domain.enums.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

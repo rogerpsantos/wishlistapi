@@ -1,7 +1,7 @@
-package com.jaya.api.impl;
+package com.jaya.api.service.impl;
 
-import com.jaya.api.model.User;
-import com.jaya.api.model.Wishlist;
+import com.jaya.api.domain.model.User;
+import com.jaya.api.domain.model.Wishlist;
 import com.jaya.api.repository.IWishlistRepository;
 import com.jaya.api.service.IWishlistService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +32,20 @@ public class WishlistServiceImpl implements IWishlistService {
 
     @Override
     public Wishlist findWishListForUser(User wishlist) {
-        return this.wishlistRepository.findWishListForUser(wishlist.getName());
+        return this.wishlistRepository.findWishListForUser(wishlist.getId());
     }
 
     @Override
     public void delete(String id) {
         this.wishlistRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean findProductInWishList(String user_id, String product_id) {
+        boolean isExist = false;
+        if(this.wishlistRepository.findProductInWishList(user_id, product_id) != null) {
+            isExist = true;
+        } else isExist = false;
+        return isExist;
     }
 }

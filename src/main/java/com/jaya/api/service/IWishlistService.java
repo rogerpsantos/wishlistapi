@@ -1,7 +1,7 @@
 package com.jaya.api.service;
 
-import com.jaya.api.model.User;
-import com.jaya.api.model.Wishlist;
+import com.jaya.api.domain.model.User;
+import com.jaya.api.domain.model.Wishlist;
 import java.util.List;
 
 public interface IWishlistService {
@@ -12,4 +12,5 @@ public interface IWishlistService {
     Wishlist findWishListForUser(User user);
     void delete (String id);
 
+    boolean findProductInWishList(String user_id, String product_id);
 }

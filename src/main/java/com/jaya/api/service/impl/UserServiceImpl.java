@@ -1,13 +1,13 @@
-package com.jaya.api.impl;
+package com.jaya.api.service.impl;
 
-import com.jaya.api.dto.UserDTO;
-import com.jaya.api.model.User;
+import com.jaya.api.domain.dto.UserDTO;
+import com.jaya.api.domain.model.User;
 import com.jaya.api.repository.IUserRepository;
 import com.jaya.api.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -16,13 +16,13 @@ public class UserServiceImpl implements IUserService {
     private IUserRepository userRepository;
 
     @Override
-    public List<User> listAll() {
-        return this.userRepository.findAll();
+    public Page<User> listAll(Pageable pageable) {
+        return this.userRepository.findAll(pageable);
     }
 
     @Override
     public User findById(String id) {
-        return this.userRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("User does not exist"));
+        return this.userRepository.findById(id).get();
     }
 
     @Override
@@ -32,6 +32,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User update(User data) {
+
         return this.userRepository.save(data);
     }
 

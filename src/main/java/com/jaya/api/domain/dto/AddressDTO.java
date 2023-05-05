@@ -1,4 +1,4 @@
-package com.jaya.api.dto;
+package com.jaya.api.domain.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

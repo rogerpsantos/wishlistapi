@@ -1,21 +1,18 @@
 package com.jaya.api.controller;
 
 import com.jaya.api.common.ApiResponse;
-import com.jaya.api.dto.UserDTO;
-import com.jaya.api.dto.WishlistDTO;
-import com.jaya.api.model.User;
-import com.jaya.api.repository.IUserRepository;
+import com.jaya.api.domain.dto.UserDTO;
+import com.jaya.api.domain.dto.UserUpdateDTO;
+import com.jaya.api.domain.model.User;
 import com.jaya.api.service.IUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("api/user")
@@ -23,42 +20,34 @@ public class UserController {
 
     @Autowired
     private IUserService userService;
-
     @GetMapping
-    public ResponseEntity<ApiResponse<List<User>>> listAll(){
-        return ResponseEntity.ok(new ApiResponse<List<User>>(this.userService.listAll()));
+    public ResponseEntity<Page<User>> listAll(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable){
+        return ResponseEntity.ok(this.userService.listAll(pageable));
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<ApiResponse<User>> findById(@PathVariable(name = "id") String id){
-        return ResponseEntity.ok(new ApiResponse<User>(this.userService.findById(id)));
+    public ResponseEntity<User> findById(@PathVariable(name = "id") String id){
+        return ResponseEntity.ok(this.userService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<User>> add(@RequestBody @Valid UserDTO data, BindingResult result) {
-        if(result.hasErrors()){
-            List<String> errors = new ArrayList<String>();
-            result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(new ApiResponse<User>(errors));
-        }
-        return ResponseEntity.ok(new ApiResponse<User>(this.userService.add(data)));
+    public ResponseEntity add(@RequestBody @Valid UserDTO data, UriComponentsBuilder uriComponentsBuilder){
+        var user = this.userService.add(data);
+        var uri = uriComponentsBuilder.path("api/user/{id}").buildAndExpand(user.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(user);
     }
 
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<ApiResponse<User>> update(@PathVariable(name = "id") String id, @RequestBody @Valid  User data, BindingResult result) {
-        if(result.hasErrors()){
-            List<String> errors = new ArrayList<String>();
-            result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(new ApiResponse<User>(errors));
-        }
-
-        data.setId(id);
-        return ResponseEntity.ok(new ApiResponse<User>(this.userService.update(data)));
+    @PutMapping
+    public ResponseEntity update(@RequestBody @Valid UserUpdateDTO data){
+        var user = this.userService.findById(data.id());
+        user.userUpdate(data);
+        return ResponseEntity.ok(this.userService.update(user));
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<ApiResponse<Integer>> delete(@PathVariable(name = "id") String id){
         this.userService.delete(id);
-        return ResponseEntity.ok(new ApiResponse<Integer>(1));
+        return ResponseEntity.noContent().build();
     }
 }

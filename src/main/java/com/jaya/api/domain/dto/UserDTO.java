@@ -1,9 +1,10 @@
-package com.jaya.api.dto;
+package com.jaya.api.domain.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.hibernate.validator.constraints.br.CPF;
 
 public record UserDTO(
@@ -11,6 +12,7 @@ public record UserDTO(
         String name,
         @NotBlank(message = "Email cannot be null")
         @Email(message = "Email is not valid")
+        @UniqueElements
         String email,
         String telephone,
         @NotBlank(message = "CPF cannot be null")

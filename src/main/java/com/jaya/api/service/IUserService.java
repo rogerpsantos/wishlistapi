@@ -1,13 +1,12 @@
 package com.jaya.api.service;
 
-import com.jaya.api.dto.UserDTO;
-import com.jaya.api.model.User;
-
-import java.util.List;
-import java.util.Optional;
+import com.jaya.api.domain.dto.UserDTO;
+import com.jaya.api.domain.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IUserService {
-    List<User> listAll();
+    Page<User> listAll(Pageable pageable);
     User findById(String id);
     User add(UserDTO user);
     User update(User user);

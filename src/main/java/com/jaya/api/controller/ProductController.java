@@ -1,8 +1,8 @@
 package com.jaya.api.controller;
 
 import com.jaya.api.common.ApiResponse;
-import com.jaya.api.dto.ProductDTO;
-import com.jaya.api.model.Product;
+import com.jaya.api.domain.dto.ProductDTO;
+import com.jaya.api.domain.model.Product;
 import com.jaya.api.service.IProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
