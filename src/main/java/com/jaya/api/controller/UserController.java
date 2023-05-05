@@ -1,6 +1,5 @@
 package com.jaya.api.controller;
 
-import com.jaya.api.common.ApiResponse;
 import com.jaya.api.domain.dto.UserDTO;
 import com.jaya.api.domain.dto.UserUpdateDTO;
 import com.jaya.api.domain.model.User;
@@ -46,7 +45,7 @@ public class UserController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<ApiResponse<Integer>> delete(@PathVariable(name = "id") String id){
+    public ResponseEntity<Integer> delete(@PathVariable(name = "id") String id){
         this.userService.delete(id);
         return ResponseEntity.noContent().build();
     }

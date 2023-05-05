@@ -1,6 +1,5 @@
 package com.jaya.api.controller;
 
-import com.jaya.api.common.ApiResponse;
 import com.jaya.api.domain.dto.ProductDTO;
 import com.jaya.api.domain.model.Product;
 import com.jaya.api.service.IProductService;
@@ -21,41 +20,30 @@ public class ProductController {
     private IProductService productService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Product>>> listAll(){
-        return ResponseEntity.ok(new ApiResponse<List<Product>>(this.productService.listAll()));
+    public ResponseEntity<List<Product>> listAll(){
+        return ResponseEntity.ok(this.productService.listAll());
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<ApiResponse<Product>> findById(@PathVariable(name = "id") String id){
-        return ResponseEntity.ok(new ApiResponse<Product>(this.productService.findById(id)));
+    public ResponseEntity<Product> findById(@PathVariable(name = "id") String id){
+        return ResponseEntity.ok(this.productService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Product>> add(@RequestBody @Valid ProductDTO data, BindingResult result) {
-        if(result.hasErrors()){
-            List<String> errors = new ArrayList<String>();
-            result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(new ApiResponse<Product>(errors));
-        }
-        return ResponseEntity.ok(new ApiResponse<Product>(this.productService.add(data)));
+    public ResponseEntity<Product> add(@RequestBody @Valid ProductDTO data){
+        return ResponseEntity.ok(this.productService.add(data));
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<ApiResponse<Product>> update(@PathVariable(name = "id") String id, @RequestBody @Valid  Product data, BindingResult result) {
-        if(result.hasErrors()){
-            List<String> errors = new ArrayList<String>();
-            result.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(new ApiResponse<Product>(errors));
-        }
-
+    public ResponseEntity<Product> update(@PathVariable(name = "id") String id, @RequestBody @Valid  Product data) {
         data.setId(id);
-        return ResponseEntity.ok(new ApiResponse<Product>(this.productService.update(data)));
+        return ResponseEntity.ok(this.productService.update(data));
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<ApiResponse<Integer>> delete(@PathVariable(name = "id") String id){
+    public ResponseEntity<Integer> delete(@PathVariable(name = "id") String id){
         this.productService.delete(id);
-        return ResponseEntity.ok(new ApiResponse<Integer>(1));
+        return ResponseEntity.noContent().build();
     }
 
 }

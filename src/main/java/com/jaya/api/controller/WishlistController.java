@@ -1,9 +1,9 @@
 package com.jaya.api.controller;
 
-import com.jaya.api.common.ApiResponse;
 import com.jaya.api.domain.model.Product;
 import com.jaya.api.domain.model.User;
 import com.jaya.api.domain.model.Wishlist;
+import com.jaya.api.exceptions.GlobalRuntimeException;
 import com.jaya.api.service.IProductService;
 import com.jaya.api.service.IUserService;
 import com.jaya.api.service.IWishlistService;
@@ -29,12 +29,9 @@ public class WishlistController {
     private static final int TOTAL_SIZE = 20;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Wishlist>> addToWishlist(@RequestBody Product prod_id,
-                                                               @RequestParam String user_id) {
+    public ResponseEntity<Wishlist> addToWishlist(@RequestBody Product prod_id, @RequestParam String user_id) {
         List<Product> prod = new ArrayList<>();
-        Wishlist wishlist;
-
-
+        Wishlist wishlist = null;
         User user = this.userService.findById(user_id);
 
         if(isNotBlank(user.getName())){
@@ -43,31 +40,33 @@ public class WishlistController {
             if(prod != null && wishlist != null){
                 if(wishlist.getProduct().size() < TOTAL_SIZE){
                     wishlist.getProduct().add(this.productService.findById(prod_id.getId()));
-                    this.wishlistService.update(wishlist);
-                    return ResponseEntity.ok(new ApiResponse<Wishlist>("Added To Wishlist", HttpStatus.CREATED));
-                } else return ResponseEntity.ok(new ApiResponse<Wishlist>("The wishlist can only contain 20 products", HttpStatus.OK));
+                    return ResponseEntity.ok(this.wishlistService.update(wishlist));
+                } else {
+                    throw new GlobalRuntimeException("The wish list has 20 products to add a new product you must delete at least one product from the list.");
+                }
             }
             wishlist = new Wishlist(user, prod);
-            this.wishlistService.createWishlist(wishlist);
-            return ResponseEntity.ok(new ApiResponse<Wishlist>("Created and Added To Wishlist", HttpStatus.CREATED));
+            return ResponseEntity.ok(this.wishlistService.createWishlist(wishlist));
         }
-        return ResponseEntity.ok(new ApiResponse<Wishlist>("Not Add To Wishlist", HttpStatus.BAD_REQUEST));
+        throw new GlobalRuntimeException("User not found.");
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Wishlist>> allProductsInWishlist(@RequestParam String user_id){
+    public ResponseEntity<Wishlist> allProductsInWishlist(@RequestParam String user_id){
         Wishlist wishlist = null;
         User user = this.userService.findById(user_id);
         if(isNotBlank(user.getName())){
             wishlist = this.wishlistService.findWishListForUser(user);
+            return ResponseEntity.ok(wishlist);
         }
-        return ResponseEntity.ok(new ApiResponse<Wishlist>(wishlist));
+        throw new GlobalRuntimeException("User does not have a wishlist.");
     }
 
     @GetMapping(path = {"/id"})
-    public ResponseEntity<ApiResponse<Wishlist>> itemOfWishlist(@RequestParam String user_id, @PathVariable(name = "id") Product prod_id){
+    public ResponseEntity<String> itemOfWishlist(@RequestParam String user_id, @PathVariable(name = "id") Product prod_id){
         Product prod;
         Wishlist wishlist;
+        boolean isExist = false;
         User user = this.userService.findById(user_id);
 
         if(isNotBlank(user.getName())) {
@@ -77,19 +76,20 @@ public class WishlistController {
             if (prod != null && wishlist != null) {
                 for(int i = wishlist.getProduct().size() - 1; i >= 0; i--){
                     if(wishlist.getProduct().get(i).getId().equals(prod.getId())){
-                        wishlist.getProduct().remove(i);
-                        this.wishlistService.findProductInWishList(user.getId().toString(), prod.getId().toString());
-                        return ResponseEntity.ok(new ApiResponse<Wishlist>("Removed Item Of Wishlist", HttpStatus.OK));
+                        isExist = this.wishlistService.findProductInWishList(user.getId().toString(), prod.getId().toString());
+                        if (!isExist){
+                            throw new GlobalRuntimeException("Product not found in wishlist");
+                        } else return ResponseEntity.ok().body("Product is already in wishlist");
                     }
                 }
             }
         }
-        return ResponseEntity.ok(new ApiResponse<Wishlist>("Not Remove Item Of Wishlist", HttpStatus.BAD_REQUEST));
+        throw new GlobalRuntimeException("User does not have a wishlist.");
     }
 
 
     @DeleteMapping
-    public ResponseEntity<ApiResponse<Wishlist>> removeItemOfWishlist(@RequestParam String user_id, @RequestParam Product prod_id){
+    public ResponseEntity<Wishlist> removeItemOfWishlist(@RequestParam String user_id, @RequestParam Product prod_id){
         Product prod;
         Wishlist wishlist;
         Wishlist finalWishlist;
@@ -105,14 +105,13 @@ public class WishlistController {
                     if(wishlist.getProduct().get(i).getId().equals(prod.getId())){
                         wishlist.getProduct().remove(i);
                         finalWishlist = wishlist;
-                        this.wishlistService.update(finalWishlist);
-                        return ResponseEntity.ok(new ApiResponse<Wishlist>("Removed Item Of Wishlist", HttpStatus.OK));
+                        return ResponseEntity.ok(this.wishlistService.update(finalWishlist));
                     }
                 }
             }
+            throw new GlobalRuntimeException("Not Remove Item Of Wishlist");
         }
-
-        return ResponseEntity.ok(new ApiResponse<Wishlist>("Not Remove Item Of Wishlist", HttpStatus.BAD_REQUEST));
+        throw new GlobalRuntimeException("User does not have a wishlist.");
     }
 }
 

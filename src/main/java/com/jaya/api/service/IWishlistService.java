@@ -8,7 +8,7 @@ public interface IWishlistService {
 
     List<Wishlist> listAll();
     Wishlist update(Wishlist id);
-    void createWishlist(Wishlist wishlist);
+    Wishlist createWishlist(Wishlist wishlist);
     Wishlist findWishListForUser(User user);
     void delete (String id);
 
