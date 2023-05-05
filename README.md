@@ -19,6 +19,7 @@ A ideria dessa API REST é possuir um serviço HTTP resolvendo a funcionalidade 
 **Back-end:** Java 17
 
 **Framework:** Spring Boot
+
 **Arquitetura de Serviços:**REST API
 
 **Gerenciador de Depenência:** Maven
