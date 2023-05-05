@@ -16,11 +16,18 @@ A ideria dessa API REST é possuir um serviço HTTP resolvendo a funcionalidade 
 ## Stack utilizada
 
 
-**Back-end:** Java, Spring Boot, REST API
+**Back-end:** Java 17
+
+**Framework:** Spring Boot
+**Arquitetura de Serviços:**REST API
+
+**Gerenciador de Depenência:** Maven
 
 **DataBase:** MongoDB
 
 **IDE:** IntelliJ
+
+**Testes:** JUnit 5
 
 
 ## DataBase Configuration
