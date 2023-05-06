@@ -12,7 +12,6 @@ public record UserDTO(
         String name,
         @NotBlank(message = "Email cannot be null")
         @Email(message = "Email is not valid")
-        @UniqueElements
         String email,
         String telephone,
         @NotBlank(message = "CPF cannot be null")
