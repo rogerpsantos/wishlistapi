@@ -68,24 +68,24 @@ public class WishlistController {
         throw new GlobalRuntimeException("User does not have a wishlist.");
     }
 
-    @GetMapping(path = {"/id"})
-    public ResponseEntity<String> itemOfWishlist(@RequestParam String user_id, @PathVariable(name = "id") Product prod_id){
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<String> itemOfWishlist(@RequestParam String user_id, @PathVariable(name = "id") String prod_id){
         Product prod;
         Wishlist wishlist;
-        boolean isExist = false;
+        Wishlist isExist;
         User user = this.userService.findById(user_id);
 
         if(isNotBlank(user.getName())) {
-            prod = this.productService.findById(prod_id.getId());
+            prod = this.productService.findById(prod_id);
             wishlist = this.wishlistService.findWishListForUser(user);
 
             if (prod != null && wishlist != null) {
                 for(int i = wishlist.getProduct().size() - 1; i >= 0; i--){
                     if(wishlist.getProduct().get(i).getId().equals(prod.getId())){
                         isExist = this.wishlistService.findProductInWishList(user.getId().toString(), prod.getId().toString());
-                        if (!isExist){
+                        if (isExist == null){
                             throw new GlobalRuntimeException("Product not found in wishlist");
-                        } else return ResponseEntity.ok().body("Product is already in wishlist");
+                        } else return ResponseEntity.ok().body("The product is already in the wishlist");
                     }
                 }
             }
@@ -94,8 +94,8 @@ public class WishlistController {
     }
 
 
-    @DeleteMapping
-    public ResponseEntity<Wishlist> removeItemOfWishlist(@RequestParam String user_id, @RequestParam Product prod_id){
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Wishlist> removeItemOfWishlist(@RequestParam String user_id, @PathVariable(name = "id") String prod_id){
         Product prod;
         Wishlist wishlist;
         Wishlist finalWishlist;
@@ -103,7 +103,7 @@ public class WishlistController {
         User user = this.userService.findById(user_id);
 
         if(isNotBlank(user.getName())) {
-            prod = this.productService.findById(prod_id.getId());
+            prod = this.productService.findById(prod_id);
             wishlist = this.wishlistService.findWishListForUser(user);
 
             if (prod != null && wishlist != null) {

@@ -9,5 +9,5 @@ public interface IWishlistService {
     Wishlist createWishlist(Wishlist wishlist);
     Wishlist findWishListForUser(User user);
 
-    boolean findProductInWishList(String user_id, String product_id);
+    Wishlist findProductInWishList(String user_id, String product_id);
 }
