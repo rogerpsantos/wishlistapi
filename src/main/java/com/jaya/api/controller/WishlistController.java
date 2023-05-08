@@ -69,10 +69,11 @@ public class WishlistController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<String> itemOfWishlist(@RequestParam String user_id, @PathVariable(name = "id") String prod_id){
+    public ResponseEntity<Product> itemOfWishlist(@RequestParam String user_id, @PathVariable(name = "id") String prod_id){
         Product prod;
         Wishlist wishlist;
-        Wishlist isExist;
+        Wishlist newWishlist;
+
         User user = this.userService.findById(user_id);
 
         if(isNotBlank(user.getName())) {
@@ -82,12 +83,13 @@ public class WishlistController {
             if (prod != null && wishlist != null) {
                 for(int i = wishlist.getProduct().size() - 1; i >= 0; i--){
                     if(wishlist.getProduct().get(i).getId().equals(prod.getId())){
-                        isExist = this.wishlistService.findProductInWishList(user.getId().toString(), prod.getId().toString());
-                        if (isExist == null){
-                            throw new GlobalRuntimeException("Product not found in wishlist");
-                        } else return ResponseEntity.ok().body("The product is already in the wishlist");
+                        newWishlist = this.wishlistService.findProductInWishList(user.getId().toString(), prod.getId().toString());
+                        if (newWishlist.getProduct().get(i) != null){
+                            return ResponseEntity.ok(newWishlist.getProduct().get(i));
+                        }
                     }
                 }
+                return ResponseEntity.noContent().build();
             }
         }
         throw new GlobalRuntimeException("User does not have a wishlist.");
