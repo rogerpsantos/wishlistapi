@@ -68,8 +68,8 @@ public class WishlistController {
         throw new GlobalRuntimeException("User does not have a wishlist.");
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<Product> itemOfWishlist(@RequestParam String user_id, @PathVariable(name = "id") String prod_id){
+    @GetMapping(path = "/{prod_id}")
+    public ResponseEntity<Product> itemOfWishlist(@RequestParam String user_id, @PathVariable(name = "prod_id") String prod_id){
         Product prod;
         Wishlist wishlist;
         Wishlist newWishlist;
@@ -96,8 +96,8 @@ public class WishlistController {
     }
 
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Wishlist> removeItemOfWishlist(@RequestParam String user_id, @PathVariable(name = "id") String prod_id){
+    @DeleteMapping(path = "/{prod_id}")
+    public ResponseEntity<Wishlist> removeItemOfWishlist(@RequestParam String user_id, @PathVariable(name = "prod_id") String prod_id){
         Product prod;
         Wishlist wishlist;
         Wishlist finalWishlist;

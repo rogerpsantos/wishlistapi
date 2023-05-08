@@ -30,13 +30,7 @@ public class WishlistServiceImpl implements IWishlistService {
 
     @Override
     public Wishlist findProductInWishList(String user_id, String product_id) {
-//        boolean isExist = false;
         var wishlist = this.wishlistRepository.findProductInWishList(user_id, product_id);
         return wishlist;
-//        if(wishlist != null) {
-//            isExist = true;
-//            return wishlist
-//        } else isExist = false;
-//        return isExist;
     }
 }
