@@ -1,7 +1,7 @@
 
 # API para Wishlist
 
-A ideria dessa API REST é possuir um serviço HTTP resolvendo a funcionalidade de Wishlist (lista de desejos) do cliente. Esse serviço deve atender os seguintes requisitos básicos que uma lista de desejos possui.
+A ideia dessa API REST é possuir um serviço HTTP resolvendo a funcionalidade de Wishlist (lista de desejos) do cliente. Esse serviço deve atender os seguintes requisitos básicos que uma lista de desejos possui.
 
 ## Autores
 
